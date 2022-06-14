@@ -12,6 +12,7 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.wzq.jz_app.R;
 import com.wzq.jz_app.base.BaseActivity;
 import com.wzq.jz_app.model.bean.remote.MyUser;
+import com.wzq.jz_app.model.repository.LocalRepository;
 import com.wzq.jz_app.utils.DataClearUtils;
 import com.wzq.jz_app.utils.GlideCacheUtil;
 import com.wzq.jz_app.utils.ProgressUtils;
@@ -266,7 +267,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     GlideCacheUtil.getInstance().clearImageDiskCache(mContext);
                     MyUser.logOut();
                     //清除本地数据
-//                    LocalRepository.getInstance().deleteAllBills();
+                    LocalRepository.getInstance().deleteAllBills();
                      //退出登录，同时清除缓存用户对象。
                     BmobUser.logOut();
                     Intent intent = new Intent(this, LoginActivity.class);
