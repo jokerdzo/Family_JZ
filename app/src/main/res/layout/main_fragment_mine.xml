@@ -24,9 +24,6 @@
           >
 
 
-
-
-
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
@@ -101,6 +98,46 @@
                     android:layout_marginRight="20dp"
                     android:layout_marginTop="3dp"
                     />
+
+            </RelativeLayout>
+
+<!--            UI添加家庭选项-->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:orientation="horizontal"
+                android:id="@+id/nav_family"
+                android:background="@color/white"
+                android:elevation="1dp"
+                android:gravity="center_vertical"
+                >
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:id="@+id/img_family"
+                    android:layout_marginLeft="20dp"
+                    android:src="@mipmap/coutcalss"
+                    />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toEndOf="@+id/img_family"
+                    android:layout_toRightOf="@+id/img_family"
+                    android:gravity="center_vertical"
+                    android:text="家   庭"
+                    android:textColor="@color/black"
+                    android:textSize="14dp" />
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@mipmap/dayu"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginTop="3dp"
+                    />
+
 
             </RelativeLayout>
 
@@ -308,46 +345,45 @@
 
             </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="45dp"
-                android:orientation="horizontal"
-                android:background="@color/white"
-                android:gravity="center_vertical"
-                android:visibility="invisible"
-                android:elevation="1dp"
-                >
+<!--            <RelativeLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="45dp"-->
+<!--                android:orientation="horizontal"-->
+<!--                android:background="@color/white"-->
+<!--                android:gravity="center_vertical"-->
+<!--                android:visibility="invisible"-->
+<!--                android:elevation="1dp"-->
+<!--                >-->
 
-                <ImageView
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:id="@+id/img7"
-                    android:layout_marginLeft="20dp"
-                    android:src="@mipmap/guanyu"
-                    />
+<!--                <ImageView-->
+<!--                    android:layout_width="25dp"-->
+<!--                    android:layout_height="25dp"-->
+<!--                    android:id="@+id/img7"-->
+<!--                    android:layout_marginLeft="20dp"-->
+<!--                    android:src="@mipmap/guanyu"-->
+<!--                    />-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="25dp"
-                    android:text="关于APP"
-                    android:textColor="@color/black"
-                    android:textSize="14dp"
-                    android:gravity="center_vertical"
-                    android:layout_toEndOf="@+id/img7"
-                    android:layout_toRightOf="@+id/img7"
-                    android:layout_marginLeft="15dp"
-                    />
-                <ImageView
-                    android:layout_width="18dp"
-                    android:layout_height="18dp"
-                    android:src="@mipmap/dayu"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="20dp"
-                    android:layout_marginTop="3dp"
-                    />
+<!--                <TextView-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="25dp"-->
+<!--                    android:layout_marginLeft="15dp"-->
+<!--                    android:layout_toEndOf="@+id/img7"-->
+<!--                    android:layout_toRightOf="@+id/img7"-->
+<!--                    android:gravity="center_vertical"-->
+<!--                    android:text="关于APP"-->
+<!--                    android:textColor="@color/black"-->
+<!--                    android:textSize="14dp" />-->
+<!--                <ImageView-->
+<!--                    android:layout_width="18dp"-->
+<!--                    android:layout_height="18dp"-->
+<!--                    android:src="@mipmap/dayu"-->
+<!--                    android:layout_alignParentRight="true"-->
+<!--                    android:layout_marginRight="20dp"-->
+<!--                    android:layout_marginTop="3dp"-->
+<!--                    />-->
 
 
-            </RelativeLayout>
+<!--            </RelativeLayout>-->
 
 
 
