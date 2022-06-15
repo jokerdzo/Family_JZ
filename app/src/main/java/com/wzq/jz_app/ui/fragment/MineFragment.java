@@ -68,9 +68,11 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.datatype.BmobFile;
 import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.UpdateListener;
 import cn.bmob.v3.listener.UploadFileListener;
 
@@ -131,6 +133,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private RelativeLayout about;
     private RelativeLayout countClass;
     private RelativeLayout nav_outexcle;
+    private RelativeLayout nav_family;
 
 
     /***************************************************************************/
@@ -176,6 +179,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         countClass = getViewById(R.id.nav_class);//账单分类
         nav_outexcle = getViewById(R.id.nav_outexcle);//导出账单
         about = getViewById(R.id.nav_about);//关于
+        nav_family = getViewById(R.id.nav_family);//家庭
 
         //设置头部账户
         setDrawerHeaderAccount();
@@ -214,6 +218,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         about.setOnClickListener(this);
         countClass.setOnClickListener(this);
         nav_outexcle.setOnClickListener(this);
+        nav_family.setOnClickListener(this);
 
     }
 
@@ -278,7 +283,34 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             case R.id.nav_about://关于
                 startActivity(new Intent(mContext, AboutActivity.class));
                 break;
+            /**
+             * 家庭按钮
+             */
+            case R.id.nav_family://家庭
+                showFamilyGroup();
+                break;
         }
+    }
+
+    /**
+     * 显示用户所属的家庭群组
+     */
+    private void showFamilyGroup(){
+//        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+//        //第一个参数是云函数的方法名称，第二个参数是上传到云函数的参数列表（JSONObject cloudCodeParams），第三个参数是回调类
+//        ace.callEndpoint("nodetest", null, new CloudCodeListener() {
+//            @Override
+//            public void done(Object object, BmobException e) {
+//                if (e == null) {
+//                    String result = object.toString();
+//                    System.out.println(result);
+//                } else {
+//                    Log.e(TAG, " " + e.getMessage());
+//                }
+//            }
+//        });
+
+
     }
 
     /**
