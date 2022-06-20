@@ -10,16 +10,6 @@ public class MyUser extends BmobUser {
 
     private String age;
 
-    public String getIfVip() {
-        return ifVip;
-    }
-
-    public void setIfVip(String ifVip) {
-        this.ifVip = ifVip;
-    }
-
-    private String ifVip;
-
     public String getImage() {
         return image;
     }

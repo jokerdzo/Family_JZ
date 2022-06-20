@@ -19,6 +19,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TabHost;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -26,6 +27,7 @@ import androidx.annotation.NonNull;
 import com.wzq.jz_app.MyApplication;
 import com.wzq.jz_app.R;
 import com.wzq.jz_app.base.BaseActivity;
+import com.wzq.jz_app.common.Constants;
 import com.wzq.jz_app.model.bean.remote.MyUser;
 import com.wzq.jz_app.net.IoMainScheduler;
 import com.wzq.jz_app.ui.fragment.MineFragment;
@@ -51,6 +53,7 @@ public class MainActivity1 extends BaseActivity {
     private static boolean isExit = false;
     private String theme;
     private MyUser currentUser;
+    private TextView home_title;
 
 
     public static SharedPreferences preferences;
@@ -129,10 +132,7 @@ public class MainActivity1 extends BaseActivity {
                 int currentTab = tabHost.getCurrentTab();
                 switch (checkedId) {
                     case R.id.radio_home:
-//                        tabHost.setCurrentTabByTag("main");
-                        //如果需要动画效果就使用
                         setCurrentTabWithAnim(currentTab, 0, "home");
-//                        getSupportActionBar().setTitle("账单");//设置顶部标题
                         lastid = checkedId;
                         break;
                     case R.id.radio_chart:
@@ -156,14 +156,13 @@ public class MainActivity1 extends BaseActivity {
                         break;
 
                     case R.id.radio_add:
-                        //fab点击事件
-//                        if (BmobUser.getCurrentUser(MyUser.class) == null) {
-//                            Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
-////                                SnackbarUtils.show(getApplicationContext(), "请先登录");
-//                        } else {
+                        if(Constants.is_current_user_flag) {
                             Intent intent = new Intent(getBaseContext(), AddActivity.class);
                             startActivityForResult(intent, 0);
-//                        }
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "请切回自己的账户", Toast.LENGTH_SHORT).show();
+                        }
                 }
                 // 刷新actionbar的menu
                 getWindow().invalidatePanelMenu(Window.FEATURE_OPTIONS_PANEL);

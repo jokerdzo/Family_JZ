@@ -81,6 +81,7 @@ public class HomeFragment extends BaseMVPFragment<MonthListContract.Presenter>
     private TextView tIncome;
     private TextView tTotal;
 
+
     private View drawerHeader;
     private ImageView drawerIv;
     private TextView drawerTvAccount, drawerTvMail;
@@ -102,6 +103,7 @@ public class HomeFragment extends BaseMVPFragment<MonthListContract.Presenter>
     private TextView tvallin;
     private TextView tvallout;
     private TextView tvall;
+    private TextView home_title;
 
     /*****************************************************************************/
 
@@ -164,7 +166,7 @@ public class HomeFragment extends BaseMVPFragment<MonthListContract.Presenter>
         tvall =getViewById(R.id.tv_all);
         tvallout =getViewById(R.id.tv_allout);
         tvallin =getViewById(R.id.tv_allin);
-
+        home_title = getViewById(R.id.home_title);
 
         rvList.setItemAnimator(new DefaultItemAnimator() {
             @Override
@@ -193,6 +195,7 @@ public class HomeFragment extends BaseMVPFragment<MonthListContract.Presenter>
     @Override
     protected void initClick() {
         super.initClick();
+
         //fab点击事件
 //        floatBtn.setOnClickListener(v -> {
 //            if (BmobUser.getCurrentUser(MyUser.class) == null)
@@ -279,6 +282,7 @@ public class HomeFragment extends BaseMVPFragment<MonthListContract.Presenter>
 
     @Override
     public void loadDataSuccess(MonthListBean monthListBean) {
+        home_title.setText(Constants.check_user_name);
         list = monthListBean.getDaylist();
         adapter.setmDatas(list);
         adapter.notifyAllSectionsDataSetChanged();

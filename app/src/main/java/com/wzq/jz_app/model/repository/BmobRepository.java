@@ -111,12 +111,12 @@ public class BmobRepository {
     /**
      * 同步账单
      */
-            public void syncBill(String userid) {
-                BmobQuery<CoBill> query = new BmobQuery<>();
-                query.addWhereEqualTo("userid", userid);
-                query.setLimit(500);//返回50条数据，如果不加上这条语句，默认返回10条数据
-                //执行查询方法
-                query.findObjects(new FindListener<CoBill>() {
+        public void syncBill(String userid) {
+            BmobQuery<CoBill> query = new BmobQuery<>();
+            query.addWhereEqualTo("userid", userid);
+            query.setLimit(500);//返回50条数据，如果不加上这条语句，默认返回10条数据
+            //执行查询方法
+            query.findObjects(new FindListener<CoBill>() {
             @Override
             public void done(List<CoBill> object, BmobException e) {
                 if (e == null) {
@@ -126,6 +126,7 @@ public class BmobRepository {
                     List<BmobObject> listUpdate = new ArrayList<>(); //需要更新的账单
                     List<BmobObject> listDelete = new ArrayList<>();//需要更新的账单
                     HashMap<String, BBill> bMap = new HashMap<>();
+                    System.out.println("1");
                     for (BBill bBill : bBills) {
                         if (bBill.getRid() == null) { //服务器端id为空，则表示为上传
                             listUpload.add(new CoBill(bBill));//以便账单成功上传后更新本地数据

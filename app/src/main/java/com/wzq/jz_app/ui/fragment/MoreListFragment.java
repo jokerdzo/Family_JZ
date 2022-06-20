@@ -135,9 +135,13 @@ public class MoreListFragment extends BaseFragment {
         if (adapter == null) {
             adapter = new MoreAdapter(getActivity());
         }
+
         adapter.setOnItemClickListener(new MoreAdapter.OnItemClickListener() {
+
             @Override
             public void onItem(ClassT bean) {
+                System.out.println("1111111111111111");
+
                 Intent intent = new Intent(getActivity(), NewsWebViewActivity.class);
                 if (tempList != null) {
                     if (bean != null) {
@@ -145,7 +149,7 @@ public class MoreListFragment extends BaseFragment {
                         intent.putExtra("contentType", type);
                         // 链接url
 //                        intent.putExtra("url", bean.getLink());
-                        intent.putExtra("url","http://192.168.10.77:8080");
+                        intent.putExtra("url","https://www.baidu.com/");
                         startActivity(intent);
 
                     }

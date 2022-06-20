@@ -31,6 +31,8 @@ public class Constants {
 
     //当前用户
     public static int currentUserId = 0;
+    public static boolean is_current_user_flag = true;
+    public static String check_user_name = "家庭记账";
 
     public static String EXTRA_IS_UPDATE_THEME = "com.copasso.cocobill.IS_UPDATE_THEME";
 

@@ -3,7 +3,6 @@ package com.wzq.jz_app.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -13,22 +12,20 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.wzq.jz_app.R;
 import com.wzq.jz_app.base.BaseActivity;
 import com.wzq.jz_app.model.bean.remote.MyUser;
+import com.wzq.jz_app.model.repository.LocalRepository;
 import com.wzq.jz_app.utils.DataClearUtils;
 import com.wzq.jz_app.utils.GlideCacheUtil;
 import com.wzq.jz_app.utils.ProgressUtils;
+import com.wzq.jz_app.utils.RequestHttpUtil;
 import com.wzq.jz_app.utils.SnackbarUtils;
 import com.wzq.jz_app.utils.ToastUtils;
 import com.wzq.jz_app.widget.CommonItemLayout;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
 import cn.bmob.v3.exception.BmobException;
-import cn.bmob.v3.listener.CloudCodeListener;
 import cn.bmob.v3.listener.UpdateListener;
 
 import static cn.bmob.v3.Bmob.getApplicationContext;
@@ -123,9 +120,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
             case R.id.cil_pay:  //支付方式管理
 //                startActivity(new Intent(this,PayEditActivity.class));
                 break;
-            case R.id.cil_export:
-
-                //导出账单
+            case R.id.cil_export://导出账单
 //                String filename= Environment.getExternalStorageDirectory()+"/AndroidExcelDemo";
 //                File file=new File(filename);
 //                if(!file.exists()){
@@ -145,32 +140,8 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                 break;
 
             case R.id.cil_vesion:
-
-                AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
-
-                JSONObject jsonObject = new JSONObject();
-                try {
-                    jsonObject.put("hostname","moon");
-                    jsonObject.put("groupName","幸福一家人");
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-//第一个参数是云函数的方法名称，第二个参数是上传到云函数的参数列表（JSONObject cloudCodeParams），第三个参数是回调类
-                ace.callEndpoint("createFamilyGroup", jsonObject, new CloudCodeListener() {
-                    @Override
-                    public void done(Object object, BmobException e) {
-                        if (e == null) {
-                            String result = object.toString();
-                            System.out.println(result);
-                        } else {
-                            Log.e(TAG, " " + e.getMessage());
-                        }
-                    }
-                });
-//---------------------------------------------------------------------------------------------------
-
+                String s = RequestHttpUtil.getlocateGetByLatAndLon(1L, 1L);
+                System.out.println(s);
                 Toast.makeText(getApplicationContext(), "已是最新版本！敬请使用", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -239,23 +210,22 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
      */
     public void showCacheDialog() {
 
-
-//        new MaterialDialog.Builder(mContext)
-//                .title("清除缓存")
-//                .positiveText("确定")
-//                .onPositive((dialog, which) -> {
-////                    GlideCacheUtil.getInstance().clearImageDiskCache(mContext);
-//                    //清除本地数据
-////                    LocalRepository.getInstance().deleteAllBills();
-//                    DataClearUtils.clearAllCache(mContext);
-//                    try {
-//                        storeCL.setRightText(DataClearUtils.getTotalCacheSize(mContext)+"");
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                    }
-//                })
-//                .negativeText("取消")
-//                .show();
+        new MaterialDialog.Builder(mContext)
+                .title("清除缓存")
+                .positiveText("确定")
+                .onPositive((dialog, which) -> {
+//                    GlideCacheUtil.getInstance().clearImageDiskCache(mContext);
+                    //清除本地数据
+//                    LocalRepository.getInstance().deleteAllBills();
+                    DataClearUtils.clearAllCache(mContext);
+                    try {
+                        storeCL.setRightText(DataClearUtils.getTotalCacheSize(mContext)+"");
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                })
+                .negativeText("取消")
+                .show();
     }
 
     /**
@@ -300,7 +270,7 @@ public class SettingActivity extends BaseActivity implements View.OnClickListene
                     GlideCacheUtil.getInstance().clearImageDiskCache(mContext);
                     MyUser.logOut();
                     //清除本地数据
-//                    LocalRepository.getInstance().deleteAllBills();
+                    LocalRepository.getInstance().deleteAllBills();
                      //退出登录，同时清除缓存用户对象。
                     BmobUser.logOut();
                     Intent intent = new Intent(this, LoginActivity.class);

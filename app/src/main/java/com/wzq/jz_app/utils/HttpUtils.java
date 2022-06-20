@@ -30,14 +30,17 @@ public class HttpUtils {
         BufferedReader reader = null;
         String result = null;
         StringBuffer sbf = new StringBuffer();
-
-        String getURL = Constants.BASE_URL + urlInfo;
-
+        //默认get
+        String METHOD = "GET";
+        if(urlInfo.contains("api.map.baidu.com"))
+            METHOD = "POST";
+//        String getURL = Constants.BASE_URL + urlInfo;
+        String getURL = urlInfo;
         try {
             URL url = new URL(getURL);
             HttpURLConnection connection = (HttpURLConnection) url
                     .openConnection();
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod(METHOD);
             connection.connect();
             InputStream is = connection.getInputStream();
             reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));

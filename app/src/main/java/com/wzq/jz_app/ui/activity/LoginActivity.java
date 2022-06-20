@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.wzq.jz_app.R;
 import com.wzq.jz_app.base.BaseMVPActivity;
+import com.wzq.jz_app.common.Constants;
 import com.wzq.jz_app.model.bean.remote.MyUser;
 import com.wzq.jz_app.presenter.LandPresenter;
 import com.wzq.jz_app.presenter.contract.LandContract;
@@ -179,6 +180,8 @@ public class LoginActivity extends BaseMVPActivity<LandContract.Presenter>
     public void landSuccess(MyUser user) {
         ProgressUtils.dismiss();
         if (isLogin) {
+            Constants.is_current_user_flag = true;
+            Constants.check_user_name = "家庭记账";
             setResult(RESULT_OK, new Intent());
             Intent intent = new Intent(this, MainActivity1.class);
             startActivity(intent);

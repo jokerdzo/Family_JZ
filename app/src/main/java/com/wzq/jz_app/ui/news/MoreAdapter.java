@@ -1,5 +1,6 @@
 package com.wzq.jz_app.ui.news;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,7 +39,7 @@ public class MoreAdapter extends RecyclerView.Adapter<MoreAdapter.MyViewHolder> 
 
     //重写onBindViewHolder()方法，在该方法中设置列表菜单中item（子项）所显示的内容
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(MyViewHolder holder, @SuppressLint("RecyclerView") int position) {
         if(datas.get(position).getTitle()!=null){
 
             //设置图片
