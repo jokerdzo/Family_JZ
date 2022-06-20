@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/drawable/bg_button_default.xml" value="0.112" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_add.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_add1.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_base_list.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_clip_image.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_create_family.xml" value="0.264" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_dialog.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_join_family.xml" value="0.15217391304347827" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_launch.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_main.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_main1.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_setting.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_user_info.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/activity_user_land.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/app_toolbar.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/app_top_date.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/custom_marker_view_layout.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/dialog_change_password.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/dialog_progress.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/dialog_single_choice.xml" value="0.4" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/drawer_header.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/home_top_date.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_family_list.xml" value="0.19166666666666668" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_recycler_monthchart_rank.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_recycler_monthlist_header.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_recycler_monthlist_item.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_recycler_note_sort.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_tb_type.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/item_tb_type_page.xml" value="0.1" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/main_fragment_chart.xml" value="0.25364583333333335" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/main_fragment_home_list.xml" value="0.264" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/main_fragment_mine.xml" value="0.1" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/main_fragment_more.xml" value="0.23802083333333332" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/main_fragment_more_item.xml" value="0.10052083333333334" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/main_home_webview.xml" value="0.264" />
+        <entry key="..\:/user/Desktop/class/Android/Family_JZ/app/src/main/res/layout/view_common_layout.xml" value="0.1" />
+      </map>
+    </option>
+  </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" project-jdk-name="JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

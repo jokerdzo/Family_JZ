@@ -11,6 +11,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.wzq.jz_app.R;
 
+import cn.bmob.v3.AsyncCustomEndpoints;
+import cn.bmob.v3.exception.BmobException;
+import cn.bmob.v3.listener.CloudCodeListener;
+
 /**
  * 作者：wzq on 2019/4/10.
  * 邮箱：wang_love152@163.com
@@ -48,7 +52,24 @@ public class LaunchActivity extends AppCompatActivity {
             }
         });
 
-
+        /**
+         * 在登录的过程中直接和bmob建立连接，之后的其他调用云函数操作就可以不用连接了
+         */
+        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
+        //第一个参数是云函数的方法名称，第二个参数是上传到云函数的参数列表（JSONObject cloudCodeParams），第三个参数是回调类
+        ace.callEndpoint("keepConnected", null, new CloudCodeListener() {
+            @Override
+            public void done(Object object, BmobException e) {
+                if (e == null) {
+                    String result = object.toString();
+                    System.out.println(result);
+                } else {
+                    //Log.e(TAG, " " + e.getMessage());
+                    System.out.println("错误信息如下：");
+                    System.out.println(e.getMessage());
+                }
+            }
+        });
 
 
     }

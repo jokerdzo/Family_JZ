@@ -28,6 +28,8 @@ public class MyApplication extends Application {
         context = getApplicationContext();
         //初始化Bmob后端云
         Bmob.initialize(getContext(),"63561b8d321d84de6be0c17f2faab05e");
+//        Bmob.initialize(getContext(),"696f47420555481bd4650182b8ad71ba");
+
           currentUser = BmobUser.getCurrentUser(MyUser.class);
     }
     public ApiService getApiService(){

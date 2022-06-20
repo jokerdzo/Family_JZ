@@ -73,6 +73,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".widget.photo.ClipImageActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name="com.wzq.jz_app.ui.activity.CreateFamilyActivity"
+            android:screenOrientation="portrait" />
+        <activity android:name="com.wzq.jz_app.ui.activity.JoinFamilyActivity"
+            android:screenOrientation="portrait" />
         <!--<provider-->
         <!--android:name="cn.bmob.v3.util.BmobContentProvider"-->
         <!--android:authorities="com.copasso.wzq.BmobContentProvider">-->

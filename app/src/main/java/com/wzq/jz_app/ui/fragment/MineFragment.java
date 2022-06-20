@@ -1,6 +1,8 @@
 package com.wzq.jz_app.ui.fragment;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -29,6 +31,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.Request;
 import com.bumptech.glide.request.RequestOptions;
 import com.wzq.jz_app.R;
 import com.wzq.jz_app.base.BaseFragment;
@@ -40,17 +43,23 @@ import com.wzq.jz_app.model.bean.remote.MyUser;
 import com.wzq.jz_app.model.repository.BmobRepository;
 import com.wzq.jz_app.model.repository.LocalRepository;
 import com.wzq.jz_app.ui.activity.AboutActivity;
+import com.wzq.jz_app.ui.activity.CreateFamilyActivity;
+import com.wzq.jz_app.ui.activity.JoinFamilyActivity;
 import com.wzq.jz_app.ui.activity.LoginActivity;
+import com.wzq.jz_app.ui.activity.MainActivity1;
 import com.wzq.jz_app.ui.activity.SettingActivity;
 import com.wzq.jz_app.ui.activity.SortActivity;
 import com.wzq.jz_app.ui.activity.UserInfoActivity;
+import com.wzq.jz_app.ui.adapter.FamilyAdapter;
 import com.wzq.jz_app.ui.adapter.MainFragmentPagerAdapter;
 import com.wzq.jz_app.utils.Base64BitmapUtils;
 import com.wzq.jz_app.utils.ExcelUtil;
 import com.wzq.jz_app.utils.FileProvider7;
 import com.wzq.jz_app.utils.FileUtil;
+import com.wzq.jz_app.utils.HttpUtils;
 import com.wzq.jz_app.utils.ImageUtils;
 import com.wzq.jz_app.utils.OSUtil;
+import com.wzq.jz_app.utils.RequestHttpUtil;
 import com.wzq.jz_app.utils.SelectphotoUtils;
 import com.wzq.jz_app.utils.SharedPUtils;
 import com.wzq.jz_app.utils.ThemeManager;
@@ -62,9 +71,15 @@ import com.google.gson.Gson;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -106,6 +121,8 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     protected static final int CHOOSE_PICTURE = 0;
     protected static final int TAKE_PICTURE = 1;
     protected static final int CROP_SMALL_PICTURE = 2;
+
+    private final String secret_key = "2e9985b26398a3a5";
     // 方形还是圆形截图
     private int type = 1;//"1"圆形 "2"方形
     //请求访问外部存储
@@ -134,6 +151,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     private RelativeLayout countClass;
     private RelativeLayout nav_outexcle;
     private RelativeLayout nav_family;
+    private TextView home_title;
 
 
     /***************************************************************************/
@@ -180,6 +198,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         nav_outexcle = getViewById(R.id.nav_outexcle);//导出账单
         about = getViewById(R.id.nav_about);//关于
         nav_family = getViewById(R.id.nav_family);//家庭
+        home_title = getViewById(R.id.home_title);
 
         //设置头部账户
         setDrawerHeaderAccount();
@@ -270,8 +289,16 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             case R.id.nav_sync://同步数据
                 if (currentUser == null)
                     Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
-                else
-                    BmobRepository.getInstance().syncBill(currentUser.getObjectId());
+                else {
+                    /*
+                     *判断是否查看的是自己的账户
+                     */
+                    if(Constants.is_current_user_flag)
+                        BmobRepository.getInstance().syncBill(currentUser.getObjectId());
+                    else {
+                        Toast.makeText(getApplicationContext(), "请切回自己的账户", Toast.LENGTH_SHORT).show();
+                    }
+                }
                 break;
             case R.id.nav_setting://设置
 
@@ -296,21 +323,220 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * 显示用户所属的家庭群组
      */
     private void showFamilyGroup(){
-//        AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
-//        //第一个参数是云函数的方法名称，第二个参数是上传到云函数的参数列表（JSONObject cloudCodeParams），第三个参数是回调类
-//        ace.callEndpoint("nodetest", null, new CloudCodeListener() {
-//            @Override
-//            public void done(Object object, BmobException e) {
-//                if (e == null) {
-//                    String result = object.toString();
-//                    System.out.println(result);
-//                } else {
-//                    Log.e(TAG, " " + e.getMessage());
-//                }
-//            }
-//        });
+        RequestHttpUtil request_http =
+                new RequestHttpUtil(this.secret_key, "findFamilyGroup", "user_object_id=" + currentUser.getObjectId());
+        String result = request_http.run();
+        System.out.println("result:" + result);
+
+        /**
+         * 显示对话框
+         */
+        AlertDialog.Builder group_item_list = new AlertDialog.Builder(mContext);
+        group_item_list.setTitle("家庭群组");
+        /**
+         * 返回结果不为空，说明已加入家庭群组,初始化群组
+         */
+        if(result != null){
+            String[] family_group = result.split(",");
+            String[] family_group_name = new String[family_group.length];
+            String[] family_group_uni_id = new String[family_group.length];
+            for(int i = 0; i < family_group.length; i++){
+                family_group_name[i] = family_group[i].split(":")[0];
+                family_group_uni_id[i] = family_group[i].split(":")[1];
+            }
+            System.out.println(family_group_name);
+            System.out.println(family_group_uni_id);
+
+            final int[] select_group_index = {-1};
+            group_item_list.setSingleChoiceItems(family_group_name, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    select_group_index[0] = which;
+                }
+            });
+            group_item_list.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if(select_group_index[0] != -1)
+                        showFamilyGroupMember(family_group_name[select_group_index[0]],
+                                            family_group_uni_id[select_group_index[0]]);
+                }
+            });
+
+        }
+        group_item_list.setNeutralButton("新增", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String[] join_create_list = {"我要创建一个家庭群组", "我要加入一个家庭群组"};
+                AlertDialog.Builder join_create_dialog = new AlertDialog.Builder(mContext);
+                join_create_dialog.setTitle("选择方式");
+                final int[] select_way_index = new int[1];
+                join_create_dialog.setSingleChoiceItems(join_create_list, -1, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        select_way_index[0] = which;
+                    }
+                });
+
+                join_create_dialog.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        System.out.println(select_way_index[0]);
+                        switch (select_way_index[0]) {
+                            case 0:
+                                //创建家庭群组
+                                showCreateFamilyView();
+                                break;
+                            case 1:
+                                //加入家庭群组
+                                showJoinFamilyView();
+                                break;
+                        }
+                    }
+                });
+                join_create_dialog.setNegativeButton("返回", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        group_item_list.show();
+                    }
+                });
+                join_create_dialog.show();
+            }
+        });
+        group_item_list.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        });
+        group_item_list.create().show();
+    }
+
+    /**
+     * 查看创建家庭群组界面
+     */
+    private void showCreateFamilyView(){
+        startActivity(new Intent(mContext, CreateFamilyActivity.class));
+    }
+
+    private void showJoinFamilyView(){
+        startActivity(new Intent(mContext, JoinFamilyActivity.class));
+    }
+
+    /**
+     * 查看群组成员列表
+     */
+    private void showFamilyGroupMember(String group_name, String group_uni_id){
+
+        //调用云函数findFamilyGroupMember
+        String params = "userObjId=" + currentUser.getObjectId() + "&UniID=" + group_uni_id;
+        String function_name = "findFamilyGroupMember";
+        RequestHttpUtil request_http_findFamilyGroupMember_function
+                = new RequestHttpUtil(this.secret_key, function_name, params);
+        String result = request_http_findFamilyGroupMember_function.run();
+        System.out.println("findFamilyGroupMember:" + result);
+        if(result.equals("您所处的Group中没有您所查找的Group！")){
+
+        }else {
+            String[] member_info_list = result.split(",");
+            String[] member_name_list = new String[member_info_list.length];
+            String[] member_obj_id_list = new String[member_info_list.length];
+            for (int i = 0; i < member_info_list.length; i++) {
+                member_name_list[i] = member_info_list[i].split(":")[1];
+                member_obj_id_list[i] = member_info_list[i].split(":")[0];
+            }
+
+            AlertDialog.Builder member_item_list = new AlertDialog.Builder(mContext);
+
+            String quit_text = "退出";
+
+            // 判断是否为群主
+            if(currentUser.getObjectId().equals(member_obj_id_list[0])){
+
+                // 获取邀请码
+                String get_invite_result = getInviteCode(member_obj_id_list[0], group_uni_id);
+                member_item_list.setTitle(group_name + ":" + get_invite_result);
+                quit_text = "解散";
+            }
+            else member_item_list.setTitle(group_name);
+
+            final int[] select_member_index = {-1};
+            member_item_list.setSingleChoiceItems(member_name_list, -1, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    select_member_index[0] = which;
+                }
+            });
+            member_item_list.setPositiveButton("查看", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Constants.is_current_user_flag =
+                            member_obj_id_list[select_member_index[0]].equals(currentUser.getObjectId());
+                    switchMemberAccount(member_obj_id_list[select_member_index[0]],
+                                        member_name_list[select_member_index[0]]);
+                }
+            });
+            member_item_list.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            String finalQuit_text = quit_text;
+            member_item_list.setNeutralButton(quit_text, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    String quit_result = quitFamily(currentUser.getObjectId(), group_uni_id);
+                    Toast.makeText(getActivity(), "已"  + finalQuit_text + "群组", Toast.LENGTH_SHORT).show();
+                }
+            });
+            member_item_list.show();
+        }
 
 
+    }
+
+    /**
+     * 切换到目标用户的账单
+     * @param user_obj_id
+     */
+    private void switchMemberAccount(String user_obj_id, String user_name){
+        BmobRepository bmobRepository = BmobRepository.getInstance();
+        LocalRepository.getInstance().deleteAllBills();
+        bmobRepository.syncBill(user_obj_id);
+        Constants.check_user_name = user_name;
+    }
+
+    /**
+     * 退出指定群组
+     * @param user_objet_id
+     * @param group_uni_id
+     */
+    private String quitFamily(String user_obj_id, String group_uni_id){
+        String function_name = "quitFamilyGroup";
+        String params = "user_objectId=" + user_obj_id + "&uniId=" + group_uni_id;
+        RequestHttpUtil request_get_invite_code_function =
+                new RequestHttpUtil(this.secret_key, function_name, params);
+        String result = request_get_invite_code_function.run();
+        System.out.println(result);
+        return result;
+    }
+
+
+    /**
+     * 调用获取邀请码的云函数
+     * @param user_obj_id
+     * @param group_uni_id
+     * @return
+     */
+    private String getInviteCode(String user_obj_id, String group_uni_id){
+        String function_name = "getFamilyGroupInviteCode";
+        String params = "userObjId=" + user_obj_id + "&UniID=" + group_uni_id;
+        RequestHttpUtil request_get_invite_code_function =
+                new RequestHttpUtil(this.secret_key, function_name, params);
+        String result = request_get_invite_code_function.run();
+        System.out.println(result);
+        return result;
     }
 
     /**

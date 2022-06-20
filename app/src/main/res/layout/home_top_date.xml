@@ -13,15 +13,15 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/title"
+            android:id="@+id/home_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="家庭记账"
-            android:gravity="center_horizontal"
-            android:textSize="20dp"
             android:layout_marginTop="10dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_horizontal"
+            android:text="家庭记账"
             android:textColor="@color/white"
-            android:layout_marginBottom="5dp"/>
+            android:textSize="20dp" />
 
         <ImageView
             android:layout_width="wrap_content"
