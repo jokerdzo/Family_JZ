@@ -1,5 +1,7 @@
 package com.wzq.jz_app.ui.fragment;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,6 +10,11 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,7 +57,6 @@ import com.wzq.jz_app.ui.activity.MainActivity1;
 import com.wzq.jz_app.ui.activity.SettingActivity;
 import com.wzq.jz_app.ui.activity.SortActivity;
 import com.wzq.jz_app.ui.activity.UserInfoActivity;
-import com.wzq.jz_app.ui.adapter.FamilyAdapter;
 import com.wzq.jz_app.ui.adapter.MainFragmentPagerAdapter;
 import com.wzq.jz_app.utils.Base64BitmapUtils;
 import com.wzq.jz_app.utils.ExcelUtil;
@@ -58,6 +64,7 @@ import com.wzq.jz_app.utils.FileProvider7;
 import com.wzq.jz_app.utils.FileUtil;
 import com.wzq.jz_app.utils.HttpUtils;
 import com.wzq.jz_app.utils.ImageUtils;
+import com.wzq.jz_app.utils.LocationUtils;
 import com.wzq.jz_app.utils.OSUtil;
 import com.wzq.jz_app.utils.RequestHttpUtil;
 import com.wzq.jz_app.utils.SelectphotoUtils;
@@ -293,7 +300,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                     /*
                      *判断是否查看的是自己的账户
                      */
-                    if(Constants.is_current_user_flag)
+                    if (Constants.is_current_user_flag)
                         BmobRepository.getInstance().syncBill(currentUser.getObjectId());
                     else {
                         Toast.makeText(getApplicationContext(), "请切回自己的账户", Toast.LENGTH_SHORT).show();
@@ -308,6 +315,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 showUpdateThemeDialog();
                 break;
             case R.id.nav_about://关于
+                getGPS();
                 startActivity(new Intent(mContext, AboutActivity.class));
                 break;
             /**
@@ -322,7 +330,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     /**
      * 显示用户所属的家庭群组
      */
-    private void showFamilyGroup(){
+    private void showFamilyGroup() {
         RequestHttpUtil request_http =
                 new RequestHttpUtil(this.secret_key, "findFamilyGroup", "user_object_id=" + currentUser.getObjectId());
         String result = request_http.run();
@@ -336,11 +344,11 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         /**
          * 返回结果不为空，说明已加入家庭群组,初始化群组
          */
-        if(result != null){
+        if (result != null) {
             String[] family_group = result.split(",");
             String[] family_group_name = new String[family_group.length];
             String[] family_group_uni_id = new String[family_group.length];
-            for(int i = 0; i < family_group.length; i++){
+            for (int i = 0; i < family_group.length; i++) {
                 family_group_name[i] = family_group[i].split(":")[0];
                 family_group_uni_id[i] = family_group[i].split(":")[1];
             }
@@ -357,9 +365,9 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             group_item_list.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(select_group_index[0] != -1)
+                    if (select_group_index[0] != -1)
                         showFamilyGroupMember(family_group_name[select_group_index[0]],
-                                            family_group_uni_id[select_group_index[0]]);
+                                family_group_uni_id[select_group_index[0]]);
                 }
             });
 
@@ -415,18 +423,19 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
     /**
      * 查看创建家庭群组界面
      */
-    private void showCreateFamilyView(){
+    private void showCreateFamilyView() {
         startActivity(new Intent(mContext, CreateFamilyActivity.class));
     }
 
-    private void showJoinFamilyView(){
+    private void showJoinFamilyView() {
         startActivity(new Intent(mContext, JoinFamilyActivity.class));
     }
+
 
     /**
      * 查看群组成员列表
      */
-    private void showFamilyGroupMember(String group_name, String group_uni_id){
+    private void showFamilyGroupMember(String group_name, String group_uni_id) {
 
         //调用云函数findFamilyGroupMember
         String params = "userObjId=" + currentUser.getObjectId() + "&UniID=" + group_uni_id;
@@ -435,9 +444,9 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 = new RequestHttpUtil(this.secret_key, function_name, params);
         String result = request_http_findFamilyGroupMember_function.run();
         System.out.println("findFamilyGroupMember:" + result);
-        if(result.equals("您所处的Group中没有您所查找的Group！")){
+        if (result.equals("您所处的Group中没有您所查找的Group！")) {
 
-        }else {
+        } else {
             String[] member_info_list = result.split(",");
             String[] member_name_list = new String[member_info_list.length];
             String[] member_obj_id_list = new String[member_info_list.length];
@@ -451,14 +460,13 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
             String quit_text = "退出";
 
             // 判断是否为群主
-            if(currentUser.getObjectId().equals(member_obj_id_list[0])){
+            if (currentUser.getObjectId().equals(member_obj_id_list[0])) {
 
                 // 获取邀请码
                 String get_invite_result = getInviteCode(member_obj_id_list[0], group_uni_id);
                 member_item_list.setTitle(group_name + ":" + get_invite_result);
                 quit_text = "解散";
-            }
-            else member_item_list.setTitle(group_name);
+            } else member_item_list.setTitle(group_name);
 
             final int[] select_member_index = {-1};
             member_item_list.setSingleChoiceItems(member_name_list, -1, new DialogInterface.OnClickListener() {
@@ -473,7 +481,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                     Constants.is_current_user_flag =
                             member_obj_id_list[select_member_index[0]].equals(currentUser.getObjectId());
                     switchMemberAccount(member_obj_id_list[select_member_index[0]],
-                                        member_name_list[select_member_index[0]]);
+                            member_name_list[select_member_index[0]]);
                 }
             });
             member_item_list.setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -487,7 +495,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     String quit_result = quitFamily(currentUser.getObjectId(), group_uni_id);
-                    Toast.makeText(getActivity(), "已"  + finalQuit_text + "群组", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "已" + finalQuit_text + "群组", Toast.LENGTH_SHORT).show();
                 }
             });
             member_item_list.show();
@@ -500,19 +508,20 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * 切换到目标用户的账单
      * @param user_obj_id
      */
-    private void switchMemberAccount(String user_obj_id, String user_name){
+    private void switchMemberAccount(String user_obj_id, String user_name) {
         BmobRepository bmobRepository = BmobRepository.getInstance();
         LocalRepository.getInstance().deleteAllBills();
         bmobRepository.syncBill(user_obj_id);
         Constants.check_user_name = user_name;
+        Toast.makeText(getActivity(), "切换成功", Toast.LENGTH_SHORT).show();
     }
 
     /**
      * 退出指定群组
-     * @param user_objet_id
+     * @param user_obj_id
      * @param group_uni_id
      */
-    private String quitFamily(String user_obj_id, String group_uni_id){
+    private String quitFamily(String user_obj_id, String group_uni_id) {
         String function_name = "quitFamilyGroup";
         String params = "user_objectId=" + user_obj_id + "&uniId=" + group_uni_id;
         RequestHttpUtil request_get_invite_code_function =
@@ -529,7 +538,7 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
      * @param group_uni_id
      * @return
      */
-    private String getInviteCode(String user_obj_id, String group_uni_id){
+    private String getInviteCode(String user_obj_id, String group_uni_id) {
         String function_name = "getFamilyGroupInviteCode";
         String params = "userObjId=" + user_obj_id + "&UniID=" + group_uni_id;
         RequestHttpUtil request_get_invite_code_function =
@@ -537,6 +546,30 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
         String result = request_get_invite_code_function.run();
         System.out.println(result);
         return result;
+    }
+
+    /**
+     * 获取GPS定位权限
+     */
+    private void getGPS() {
+//        System.out.println("run gps");
+        if (Build.VERSION.SDK_INT >= 23) {// android6 执行运行时权限
+            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            } else {
+                Log.e(TAG, "权限已申请");
+                LocationUtils.getInstance(getActivity()).setAddressCallback(new LocationUtils.AddressCallback() {
+                    @Override
+                    public void onGetLocation(double lat, double lng) {
+                        System.out.println(lat + " " + lng);
+                    }
+                });
+            }
+        } else {
+
+        }
+
+
     }
 
     /**

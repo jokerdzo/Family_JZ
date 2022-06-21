@@ -131,6 +131,7 @@ public class MonthListAdapter extends StickyHeaderGridAdapter {
             new MaterialDialog.Builder(mContext)
                     .title(bBill.getSortName())
                     .content("\t\t" + Math.abs(bBill.getCost()) + "元\n\t\t" + bBill.getContent()
+                            +"\n\t\t" + "位置：" + bBill.getLocation()
                             +"\n\n\t\t"+ DateUtils.long2Str(bBill.getCrdate(), DateUtils.FORMAT_YMD_CN)
                             +"\n\t\t"+DateUtils.long2Str(bBill.getCrdate(), DateUtils.FORMAT_HMS_CN))
                     .positiveText("知道了")

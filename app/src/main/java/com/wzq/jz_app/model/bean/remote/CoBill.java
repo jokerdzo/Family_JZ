@@ -19,6 +19,7 @@ public class CoBill extends BmobObject {
     private long crdate;  //创建时间
     private boolean income;  //收入支出
     private int version;  //版本
+    private String location; //位置
 
     public CoBill() {
 
@@ -35,13 +36,14 @@ public class CoBill extends BmobObject {
         this.crdate = bBill.getCrdate();
         this.income = bBill.getIncome();
         this.version = bBill.getVersion();
+        this.location = bBill.getLocation();
         //不要忘记设置服务器ObjectId
         if (bBill.getRid() != null)
             setObjectId(bBill.getRid());
     }
 
     public CoBill(float cost, String content, String userid, String payName, String payImg,
-                  String sortName, String sortImg, long crdate, boolean income, int version) {
+                  String sortName, String sortImg, long crdate, boolean income, int version, String location) {
         this.cost = cost;
         this.content = content;
         this.userid = userid;
@@ -52,6 +54,7 @@ public class CoBill extends BmobObject {
         this.crdate = crdate;
         this.income = income;
         this.version = version;
+        this.location = location;
     }
 
     public float getCost() {
@@ -136,5 +139,13 @@ public class CoBill extends BmobObject {
 
     public boolean getIncome() {
         return this.income;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 }

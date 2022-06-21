@@ -36,6 +36,7 @@ public class BBillDao extends AbstractDao<BBill, Long> {
         public final static Property Crdate = new Property(9, long.class, "crdate", false, "CRDATE");
         public final static Property Income = new Property(10, boolean.class, "income", false, "INCOME");
         public final static Property Version = new Property(11, int.class, "version", false, "VERSION");
+        public final static Property Location = new Property(12, String.class, "location", false, "LOCATION");
     }
 
 
@@ -62,7 +63,8 @@ public class BBillDao extends AbstractDao<BBill, Long> {
                 "\"SORT_IMG\" TEXT," + // 8: sortImg
                 "\"CRDATE\" INTEGER NOT NULL ," + // 9: crdate
                 "\"INCOME\" INTEGER NOT NULL ," + // 10: income
-                "\"VERSION\" INTEGER NOT NULL );"); // 11: version
+                "\"VERSION\" INTEGER NOT NULL ," + // 11: version
+                "\"LOCATION\" TEXT);"); // 12: location
     }
 
     /** Drops the underlying database table. */
@@ -118,6 +120,11 @@ public class BBillDao extends AbstractDao<BBill, Long> {
         stmt.bindLong(10, entity.getCrdate());
         stmt.bindLong(11, entity.getIncome() ? 1L: 0L);
         stmt.bindLong(12, entity.getVersion());
+ 
+        String location = entity.getLocation();
+        if (location != null) {
+            stmt.bindString(13, location);
+        }
     }
 
     @Override
@@ -167,6 +174,11 @@ public class BBillDao extends AbstractDao<BBill, Long> {
         stmt.bindLong(10, entity.getCrdate());
         stmt.bindLong(11, entity.getIncome() ? 1L: 0L);
         stmt.bindLong(12, entity.getVersion());
+ 
+        String location = entity.getLocation();
+        if (location != null) {
+            stmt.bindString(13, location);
+        }
     }
 
     @Override
@@ -188,7 +200,8 @@ public class BBillDao extends AbstractDao<BBill, Long> {
             cursor.isNull(offset + 8) ? null : cursor.getString(offset + 8), // sortImg
             cursor.getLong(offset + 9), // crdate
             cursor.getShort(offset + 10) != 0, // income
-            cursor.getInt(offset + 11) // version
+            cursor.getInt(offset + 11), // version
+            cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12) // location
         );
         return entity;
     }
@@ -207,6 +220,7 @@ public class BBillDao extends AbstractDao<BBill, Long> {
         entity.setCrdate(cursor.getLong(offset + 9));
         entity.setIncome(cursor.getShort(offset + 10) != 0);
         entity.setVersion(cursor.getInt(offset + 11));
+        entity.setLocation(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
      }
     
     @Override

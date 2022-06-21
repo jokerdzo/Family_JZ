@@ -161,7 +161,25 @@
             android:layout_marginTop="7dp"
             android:textColor="@color/white"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/tb_note_gps"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/shape_tb_cash"
+            android:paddingLeft="20dp"
+            android:paddingTop="6dp"
+            android:paddingRight="20dp"
+            android:paddingBottom="7dp"
+            android:gravity="center"
+            android:text="GPS"
+            android:textSize="15sp"
+            android:textColor="@color/white"
+            />
+
         <RelativeLayout
             android:layout_weight="1"
             android:layout_width="0dp"

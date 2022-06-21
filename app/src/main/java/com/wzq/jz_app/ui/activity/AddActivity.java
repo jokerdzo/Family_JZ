@@ -1,9 +1,13 @@
 package com.wzq.jz_app.ui.activity;
 
+import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +17,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.GravityEnum;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.wzq.jz_app.MyApplication;
@@ -30,7 +37,9 @@ import com.wzq.jz_app.presenter.contract.BillContract;
 import com.wzq.jz_app.ui.adapter.BookNoteAdapter;
 import com.wzq.jz_app.ui.adapter.MonthChartAdapter;
 import com.wzq.jz_app.utils.DateUtils;
+import com.wzq.jz_app.utils.LocationUtils;
 import com.wzq.jz_app.utils.ProgressUtils;
+import com.wzq.jz_app.utils.RequestHttpUtil;
 import com.wzq.jz_app.utils.SnackbarUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -59,6 +68,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
     private ImageView remarkIv;   //
     private ViewPager viewpagerItem;
     private LinearLayout layoutIcon;
+    private TextView GPS_button;
 
     //计算器
     protected boolean isDot;
@@ -70,6 +80,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
     //选择器
     protected List<String> cardItems;
     protected int selectedPayinfoIndex = 0;      //选择的支付方式序号
+    protected int selected_location_index = 0; //选择记录位置的方式
     //viewpager数据
     protected int page;
     protected boolean isTotalPage;
@@ -95,6 +106,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
 
     //备注
     protected String remarkInput = "";
+    protected String locationInput = "GPS";
     protected NoteBean noteBean = null;
 
     /***********************************************************************/
@@ -141,6 +153,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
         remarkIv = findViewById(R.id.tb_note_remark);
         viewpagerItem = findViewById(R.id.viewpager_item);
         layoutIcon = findViewById(R.id.layout_icon);
+        GPS_button = findViewById(R.id.tb_note_gps);
 
         //设置账单日期
         dateTv.setText(days);
@@ -156,6 +169,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
         cashTv.setOnClickListener(this);
         dateTv.setOnClickListener(this);
         remarkIv.setOnClickListener(this);
+        GPS_button.setOnClickListener(this);
     }
 
     @Override
@@ -186,6 +200,9 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
                 break;
             case R.id.tb_note_remark://备注
                 showContentDialog();
+                break;
+            case R.id.tb_note_gps: //GPS
+                showGPSDialog();
                 break;
             case R.id.tb_calc_num_done://确定
                 doCommit();
@@ -235,6 +252,105 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
                 break;
         }
     }
+
+    /**
+     * 点击GPS按钮
+     */
+    public void showGPSDialog(){
+
+        MaterialDialog.Builder gps_dialog = new MaterialDialog.Builder(mContext);
+        String[] get_location_function_list = {"使用GPS定位","手动记录", "不记录"};
+
+        gps_dialog.title("请选择位置方式")
+                .titleGravity(GravityEnum.CENTER)
+                .items(get_location_function_list)
+                .positiveText("确定")
+                .negativeText("取消")
+                .itemsCallbackSingleChoice(selected_location_index, (dialog, itemView, which, text) -> {
+                    selected_location_index = which;
+                    switch (which) {
+                        case 0:
+                            getLongitudeLatitude();
+                            break;
+                        case 1:
+                            inputLocation();
+                            break;
+                        case 2:
+                            this.locationInput = null;
+                            break;
+                    }
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                    this.GPS_button.setText(this.locationInput);
+                    dialog.dismiss();
+                    return true;
+                }).show();
+        this.GPS_button.setText(this.locationInput);
+    }
+
+    /**
+     * 获取经纬度
+     */
+    public void getLongitudeLatitude(){
+        final String[] city_msg = new String[1];
+        //判断是否能直接获取权限
+        if (Build.VERSION.SDK_INT >= 23) {// android6 执行运行时权限
+            if (ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(mActivity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(mActivity, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+            } else {
+                Log.e(TAG, "权限已申请");
+                LocationUtils.getInstance(mActivity).setAddressCallback(new LocationUtils.AddressCallback() {
+                    @Override
+                    public void onGetLocation(double lat, double lng) {
+                        System.out.println(lat + " " + lng);
+                        getLocationCity(lat, lng);
+                    }
+                });
+            }
+        } else { // 权限已打开
+            LocationUtils.getInstance(mActivity).setAddressCallback(new LocationUtils.AddressCallback() {
+                @Override
+                public void onGetLocation(double lat, double lng) {
+                    System.out.println(lat + " " + lng);
+                    getLocationCity(lat, lng);
+                }
+            });
+        }
+    }
+
+    /**
+     * 获取城市信息
+     * @param lat 纬度
+     * @param lng 经度
+     */
+    public void getLocationCity(double lat, double lng){
+        String address = RequestHttpUtil.getlocateGetByLatAndLon(lat, lng);
+        System.out.println(address);
+        locationInput = address;
+        this.GPS_button.setText(locationInput);
+    }
+
+    public void inputLocation(){
+        new MaterialDialog.Builder(this)
+                .title("输入位置")
+                .inputType(InputType.TYPE_CLASS_TEXT)
+                .inputRangeRes(0, 200, R.color.textRed)
+                .input("写点什么", locationInput, (dialog, input) -> {
+                    if (input.equals("")) {
+                        Toast.makeText(getApplicationContext(), "内容不能为空！" + input,
+                                Toast.LENGTH_SHORT).show();
+                    } else {
+                        locationInput = input.toString();
+                        this.GPS_button.setText(locationInput);
+                    }
+                })
+                .positiveText("确定")
+                .show();
+    }
+
 
     /**
      * 监听Activity返回结果
@@ -341,7 +457,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
                     noteBean.getPayinfo().get(selectedPayinfoIndex).getPayName(),
                     noteBean.getPayinfo().get(selectedPayinfoIndex).getPayImg(),
                     lastBean.getSortName(), lastBean.getSortImg(),
-                    DateUtils.getMillis(crDate), !isOutcome, bundle.getInt("version") + 1);
+                    DateUtils.getMillis(crDate), !isOutcome, bundle.getInt("version") + 1, this.locationInput);
             mPresenter.updateBill(bBill);
         } else {
             bBill = new BBill(null, null, Float.valueOf(num + dotNum), remarkInput,
@@ -349,7 +465,7 @@ public class AddActivity extends BaseMVPActivity<BillContract.Presenter>
                     noteBean.getPayinfo().get(selectedPayinfoIndex).getPayName(),
                     noteBean.getPayinfo().get(selectedPayinfoIndex).getPayImg(),
                     lastBean.getSortName(), lastBean.getSortImg(),
-                    DateUtils.getMillis(crDate), !isOutcome, 0);
+                    DateUtils.getMillis(crDate), !isOutcome, 0, this.locationInput);
             mPresenter.addBill(bBill);
         }
     }

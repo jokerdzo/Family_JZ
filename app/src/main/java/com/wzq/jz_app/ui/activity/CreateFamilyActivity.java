@@ -13,11 +13,15 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.material.textfield.TextInputLayout;
 import com.wzq.jz_app.R;
 import com.wzq.jz_app.base.BaseActivity;
+import com.wzq.jz_app.common.Constants;
 import com.wzq.jz_app.model.bean.remote.MyUser;
 import com.wzq.jz_app.utils.DataClearUtils;
+import com.wzq.jz_app.utils.RequestHttpUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.sql.Time;
 
 import cn.bmob.v3.AsyncCustomEndpoints;
 import cn.bmob.v3.BmobUser;
@@ -84,8 +88,9 @@ public class CreateFamilyActivity extends BaseActivity implements View.OnClickLi
                     .show();
         }else{
 
-            new MaterialDialog.Builder(mContext)
-                    .title("是否确定创建家庭群组")
+            MaterialDialog.Builder dialog_create_tip = new MaterialDialog.Builder(mContext);
+
+            dialog_create_tip.title("是否确定创建家庭群组")
                     .positiveText("确定")
                     .onPositive((dialog, which) -> {
                         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
@@ -96,7 +101,6 @@ public class CreateFamilyActivity extends BaseActivity implements View.OnClickLi
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
-                        System.out.println(params);
                         ace.callEndpoint("createFamilyGroup", params, new CloudCodeListener() {
                             @Override
                             public void done(Object object, BmobException e) {
@@ -108,9 +112,18 @@ public class CreateFamilyActivity extends BaseActivity implements View.OnClickLi
                                 }
                             }
                         });
+                        dialog_create_tip.title("创建成功,1s后自动返回");
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        finish();
                     })
                     .negativeText("取消")
                     .show();
+
+
         }
 
     }

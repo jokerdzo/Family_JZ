@@ -261,6 +261,7 @@ public class BillUtils {
         bBill.setUserid(coBill.getUserid());
         bBill.setContent(coBill.getContent());
         bBill.setCost(coBill.getCost());
+        bBill.setLocation(coBill.getLocation());
 
         return bBill;
     }

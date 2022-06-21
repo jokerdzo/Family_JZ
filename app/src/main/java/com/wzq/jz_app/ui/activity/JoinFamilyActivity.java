@@ -1,10 +1,12 @@
 package com.wzq.jz_app.ui.activity;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -97,17 +99,21 @@ public class JoinFamilyActivity extends BaseActivity implements View.OnClickList
                         "inviteCode=" + invite_code + "&userObjectId=" + currentUser.getObjectId());
         String join_result = request_http_join_function.run();
         System.out.println(join_result);
-        if(join_result.equals("用户加入家庭成功")){
-            new MaterialDialog.Builder(mContext)
-                    .title("您已成为家庭的一员")
+        MaterialDialog.Builder dialog_join_tip = new MaterialDialog.Builder(mContext);
+        if(join_result.equals(" 用户加入家庭成功")){
+            dialog_join_tip.title("您已成为家庭的一员")
                     .negativeText("确定")
+                    .onNegative((dialog, which) ->{
+                        finish();
+                    })
                     .show();
         }else{
-            new MaterialDialog.Builder(mContext)
-                    .title("加入家庭失败")
+            dialog_join_tip.title("加入家庭失败")
                     .negativeText("确定")
+                    .onNegative((dialog, which) ->{
+                        finish();
+                    })
                     .show();
         }
-
     }
 }
