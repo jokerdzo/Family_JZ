@@ -116,7 +116,7 @@
                     android:layout_height="25dp"
                     android:id="@+id/img_family"
                     android:layout_marginLeft="20dp"
-                    android:src="@mipmap/coutcalss"
+                    android:src="@mipmap/home"
                     />
 
                 <TextView
