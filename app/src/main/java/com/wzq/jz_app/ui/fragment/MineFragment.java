@@ -322,7 +322,12 @@ public class MineFragment extends BaseFragment implements View.OnClickListener {
              * 家庭按钮
              */
             case R.id.nav_family://家庭
-                showFamilyGroup();
+                currentUser = BmobUser.getCurrentUser(MyUser.class);
+                //获取当前用户
+                if (currentUser == null)
+                    Toast.makeText(getApplicationContext(), "请先登录", Toast.LENGTH_SHORT).show();
+                else
+                    showFamilyGroup();
                 break;
         }
     }
