@@ -96,8 +96,9 @@ public class CreateFamilyActivity extends BaseActivity implements View.OnClickLi
                         AsyncCustomEndpoints ace = new AsyncCustomEndpoints();
                         JSONObject params = new JSONObject();
                         try {
-                            params.put("hostname", currentUser.getUsername());
+                            params.put("hostName", currentUser.getUsername());
                             params.put("groupName",family_name);
+                            params.put("objectId", currentUser.getObjectId());
                         }catch (JSONException e){
                             e.printStackTrace();
                         }
